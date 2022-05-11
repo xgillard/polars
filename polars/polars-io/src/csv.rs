@@ -209,6 +209,8 @@ where
     delimiter: Option<u8>,
     has_header: bool,
     ignore_parser_errors: bool,
+    /// Should leading and trailing whitespaces be dropped when parsing data ?
+    trim_whitespaces: bool,
     schema: Option<&'a Schema>,
     encoding: CsvEncoding,
     n_threads: Option<usize>,
@@ -267,6 +269,11 @@ where
     /// Continue with next batch when a ParserError is encountered.
     pub fn with_ignore_parser_errors(mut self, ignore: bool) -> Self {
         self.ignore_parser_errors = ignore;
+        self
+    }
+    /// Should the leading and trailing whitespaces be discarded when parsing data 
+    pub fn with_trim_whitespaces(mut self, trim: bool) -> Self {
+        self.trim_whitespaces = trim;
         self
     }
 
@@ -435,6 +442,7 @@ where
             delimiter: None,
             has_header: true,
             ignore_parser_errors: false,
+            trim_whitespaces: false,
             schema: None,
             columns: None,
             encoding: CsvEncoding::Utf8,
@@ -516,6 +524,7 @@ where
                 self.delimiter,
                 self.has_header,
                 self.ignore_parser_errors,
+                self.trim_whitespaces,
                 self.schema,
                 self.columns,
                 self.encoding,
@@ -546,6 +555,7 @@ where
                 self.delimiter,
                 self.has_header,
                 self.ignore_parser_errors,
+                self.trim_whitespaces,
                 self.schema,
                 self.columns,
                 self.encoding,

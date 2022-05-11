@@ -63,6 +63,8 @@ pub(crate) struct CoreReader<'a> {
     /// Current line number, used in error reporting
     line_number: usize,
     ignore_parser_errors: bool,
+    /// Should leading and trailing whitespaces be ignored when parsing the data ?
+    trim_whitespaces: bool,
     skip_rows: usize,
     n_rows: Option<usize>,
     encoding: CsvEncoding,
@@ -150,6 +152,7 @@ impl<'a> CoreReader<'a> {
         delimiter: Option<u8>,
         has_header: bool,
         ignore_parser_errors: bool,
+        trim_whitespaces: bool,
         schema: Option<&'a Schema>,
         columns: Option<Vec<String>>,
         encoding: CsvEncoding,
@@ -256,6 +259,7 @@ impl<'a> CoreReader<'a> {
             projection,
             line_number: if has_header { 1 } else { 0 },
             ignore_parser_errors,
+            trim_whitespaces,
             skip_rows,
             n_rows,
             encoding,
@@ -456,6 +460,7 @@ impl<'a> CoreReader<'a> {
                         let delimiter = self.delimiter;
                         let schema = self.schema.clone();
                         let ignore_parser_errors = self.ignore_parser_errors;
+                        let trim_whitespaces = self.trim_whitespaces;
                         let projection = &projection;
 
                         let mut read = bytes_offset_thread;
@@ -490,6 +495,7 @@ impl<'a> CoreReader<'a> {
                                 projection,
                                 &mut buffers,
                                 ignore_parser_errors,
+                                trim_whitespaces,
                                 chunk_size,
                                 self.schema.len(),
                             )?;
@@ -576,6 +582,7 @@ impl<'a> CoreReader<'a> {
                         let delimiter = self.delimiter;
                         let schema = self.schema.clone();
                         let ignore_parser_errors = self.ignore_parser_errors;
+                        let trim_whitespaces = self.trim_whitespaces;
                         let projection = &projection;
 
                         let mut read = bytes_offset_thread;
@@ -607,6 +614,7 @@ impl<'a> CoreReader<'a> {
                                 projection,
                                 &mut buffers,
                                 ignore_parser_errors,
+                                trim_whitespaces,
                                 // chunk size doesn't really matter anymore,
                                 // less calls if we increase the size
                                 usize::MAX,
